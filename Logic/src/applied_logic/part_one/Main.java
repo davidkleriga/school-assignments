@@ -1,7 +1,7 @@
 package applied_logic.part_one;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 import applied_logic.utility.*;
 
@@ -20,23 +20,18 @@ public class Main {
 
         System.out.println(WELCOME_MESSAGE);
 
-        String ipv4Address = "192.168.0.0";
-        String subnetMaskAddress = "255.255.255.248";
+//        String ipv4Address = "192.168.0.0";
+//        String subnetMaskAddress = "255.255.255.248";
 
-//        String ipv4Address = Prompt.GetPromptValueSynchronous(PROMPT_MESSAGES[0], PROMPT_ERROR_MESSAGE, IP_ADDRESS_PATTERN );
-//        String subnetMaskAddress =Prompt.GetPromptValueSynchronous(PROMPT_MESSAGES[1], PROMPT_ERROR_MESSAGE, IP_ADDRESS_PATTERN );
+        String ipv4Address = Prompt.GetPromptValueSynchronous(PROMPT_MESSAGES[0], PROMPT_ERROR_MESSAGE, IP_ADDRESS_PATTERN );
+        String subnetMaskAddress =Prompt.GetPromptValueSynchronous(PROMPT_MESSAGES[1], PROMPT_ERROR_MESSAGE, IP_ADDRESS_PATTERN );
 
-        System.out.println("ipv4Address: " + ipv4Address);
-        System.out.println("subnetMaskAddress: " + subnetMaskAddress);
-        //Either accept or reject. Print
-//
-//        int MAX_SUBNET_VALUE = Integer.parseInt("11111111", 2);
-//        String BINARY_VALUE = Integer.toBinaryString(127);
-//        int BACK_BINARY_VALUE = Integer.parseInt(BINARY_VALUE, 2);
 
         boolean isValidSubnet = true;
 
         String[] subnetParts = subnetMaskAddress.split("\\.");
+
+        //validate subnet
 
         if (subnetParts.length != 4) {
             isValidSubnet = false;
@@ -61,23 +56,50 @@ public class Main {
             }
         }
 
-
-//        System.out.println(MAX_SUBNET_VALUE);
-//        System.out.println(BINARY_VALUE);
-//        System.out.println("^M^^B");
-//        System.out.println(BACK_BINARY_VALUE + " bbv");
-
         System.out.println("subnet mask: " + subnetMaskAddress + " validity is: " + isValidSubnet);
 
         String secondIpv4Address = Prompt.GetPromptValueSynchronous(PROMPT_MESSAGES[2], PROMPT_ERROR_MESSAGE, IP_ADDRESS_PATTERN );
         System.out.println("secondIpv4Address: " + secondIpv4Address);
 
-        int ipv4AddressAndSubmask = Integer.parseInt(ipv4Address, 2) & Integer.parseInt(subnetMaskAddress, 2);
-        System.out.println("ipv4AddressAndSubmask: " + ipv4AddressAndSubmask);
-        int secondIpv4AddressAndSubmask = Integer.parseInt(secondIpv4Address, 2) & Integer.parseInt(subnetMaskAddress, 2);
-        System.out.println("secondIpv4AddressAndSubmask: " + secondIpv4AddressAndSubmask);
+        String[] ipv4Parts = ipv4Address.split("\\.");
+        String[] secondIpv4Parts = secondIpv4Address.split("\\.");
 
-        System.out.println("Are they on the same network? " + (ipv4AddressAndSubmask == secondIpv4AddressAndSubmask ));
+        List<String> ipv4MaskedBitChunks = new ArrayList<>();
+        List<String> secondIPv4MaskedBitChunks = new ArrayList<>();
+
+        for ( int i = 0; i < ipv4Parts.length; i++) {
+            int numberValue = Integer.parseInt(ipv4Parts[i]);
+            String binaryStringValue = Integer.toBinaryString(numberValue);
+            int binaryValue = Integer.parseInt(binaryStringValue, 2);
+
+            int submaskBits = Integer.parseInt(Integer.toBinaryString(Integer.parseInt(subnetParts[i])), 2);
+            ipv4MaskedBitChunks.add(Integer.toBinaryString(binaryValue & submaskBits));
+        }
+
+        for ( int i = 0; i < secondIpv4Parts.length; i++) {
+            int numberValue = Integer.parseInt(secondIpv4Parts[i]);
+            String binaryStringValue = Integer.toBinaryString(numberValue);
+            int binaryValue = Integer.parseInt(binaryStringValue, 2);
+
+            int submaskBits = Integer.parseInt(Integer.toBinaryString(Integer.parseInt(subnetParts[i])), 2);
+            secondIPv4MaskedBitChunks.add(Integer.toBinaryString(binaryValue & submaskBits));
+        }
+
+        boolean residesOnSameNetwork = true;
+        for ( int i = 0; i < ipv4MaskedBitChunks.size(); i++) {
+            if ( !ipv4MaskedBitChunks.get(i).equals(secondIPv4MaskedBitChunks.get(i)) ) {
+                residesOnSameNetwork = false;
+                break;
+            }
+        }
+
+        System.out.println("ipv4AddressAndSubmask: " + ipv4Address);
+        System.out.println("secondIpv4Address: " + secondIpv4Address);
+
+        System.out.println("IP chunks #1: " + ipv4MaskedBitChunks);
+        System.out.println("IP chunks #2: " + secondIPv4MaskedBitChunks);
+//
+        System.out.println("Are they on the same network? " + (residesOnSameNetwork ));
         //Enter a second IP address and check if it is in the same network (submask match)
 
     }
