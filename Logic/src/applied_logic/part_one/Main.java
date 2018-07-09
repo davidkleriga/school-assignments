@@ -71,6 +71,13 @@ public class Main {
 
         String secondIpv4Address = Prompt.GetPromptValueSynchronous(PROMPT_MESSAGES[2], PROMPT_ERROR_MESSAGE, IP_ADDRESS_PATTERN );
         System.out.println("secondIpv4Address: " + secondIpv4Address);
+
+        int ipv4AddressAndSubmask = Integer.parseInt(ipv4Address, 2) & Integer.parseInt(subnetMaskAddress, 2);
+        System.out.println("ipv4AddressAndSubmask: " + ipv4AddressAndSubmask);
+        int secondIpv4AddressAndSubmask = Integer.parseInt(secondIpv4Address, 2) & Integer.parseInt(subnetMaskAddress, 2);
+        System.out.println("secondIpv4AddressAndSubmask: " + secondIpv4AddressAndSubmask);
+
+        System.out.println("Are they on the same network? " + (ipv4AddressAndSubmask == secondIpv4AddressAndSubmask ));
         //Enter a second IP address and check if it is in the same network (submask match)
 
     }
